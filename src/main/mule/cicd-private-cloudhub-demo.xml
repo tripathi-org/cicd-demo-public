@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="8b94f247-e463-4540-af57-7afd8a4ed78a" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="cicd-private-cloudhub-demoFlow" doc:id="1e377e9b-e203-4eb2-9b1e-d66ed888d876" >
+		<http:listener doc:name="Listener" doc:id="89af7007-2451-4703-9192-47e9c190cbc3" config-ref="HTTP_Listener_config" path="/demo"/>
+		<set-payload value='"Hello Mule"' doc:name="Set Payload" doc:id="14b67887-392d-4b3d-bb41-c0b65fd37cc3" />
+		<logger level="INFO" doc:name="First Logger" doc:id="20f57f69-5c0c-4397-ad3a-c13a10487fce" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"message": "Sample message from mule application to cloudwatch NEW"&#10;}]'/>
+		<logger level="INFO" doc:name="Second Logger" doc:id="6f0a0c4c-b043-4bcc-88e0-39e42e0396d6" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"message": "logs send to cloudwatch2"&#10;}]'/>
+	</flow>
+</mule>

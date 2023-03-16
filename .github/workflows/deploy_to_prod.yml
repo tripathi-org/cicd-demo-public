@@ -1,0 +1,40 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Cloudhub build and deploy to Prod
+
+# Controls when the workflow will run
+on:
+  pull_request:
+    branches: [master]
+    types: [closed] 
+
+jobs:
+  buildAndDeploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Build and Deploy with Maven
+      run: mvn clean -B deploy -DmuleDeploy -s .maven/settings.xml
+      env:
+        NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+        NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+        CONTD_APP_CLIENT_ID: ${{ secrets.CONTD_APP_CLIENT_ID_PROD }}
+        CONTD_APP_CLIENT_SECRET: ${{ secrets.CONTD_APP_CLIENT_SECRET_PROD }}
+        ORG_ID: ${{ secrets.ORG_ID }}
+        environment: "Production"
+        target: "Production"
+        replicas: "1"
+        cores: "0.2"
+        AWS_REGION: "us-east-1"
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_KEY_ID: ${{ secrets.AWS_SECRET_KEY_ID }}
+        LOG_GROUP_NAME: "mulesoft-logger2"
